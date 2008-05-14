@@ -1,4 +1,59 @@
-ValidatesWithBlock
-==================
+= ValidatesWithBlock
 
-Allows for dynamic, more readable block-driven validation for ActiveRecord models.
+A plugin that allows for dynamic, more readable block-driven validation for
+ActiveRecord models.
+
+== Installing as a plugin
+
+EDGE Rails has support for plugin installation from Git, so if you're using
+EDGE Rails you can install with:
+
+  ./script/plugin install git://github.com/fhwang/validates_with_block.git
+
+We're maintaining an SVN clone of the plugin for those of you who aren't on
+EDGE Rails yet:
+
+  ./script/plugin install svn://rubyforge.org/var/svn/nycrb/validates_with_block
+
+== Using ValidatesWithBlock
+
+Basically this plugin is meant to help you make your models a little cleaner if 
+you've got a lot of validations. Instead of:
+
+  validates_presence_of   :login, :message => 'Please enter a login.'
+  validates_uniqueness_of :login, :case_sensitive => false
+  validates_format_of     :login, :with => /\A\w*\Z/
+  validates_length_of     :login, :within => 4..15
+  
+You can write:
+
+  validates_login do |login|
+    login.present   :message => 'Please enter a login.'
+    login.unique    :case_sensitive => false
+    login.formatted :with => /\A\w*\Z/
+    login.length    :within => 4..15
+  end
+                               
+The methods map to validation methods as follows:
+
+  login.confirmed          => validates_confirmation_of
+  login.formatted          => validates_format_of
+  login.formatted_as_email => validates_email_format_of
+  login.length             => validates_length_of
+  login.present            => validates_presence_of
+  login.unique             => validates_uniqueness_of
+
+== formatted_as_email
+
+You may have noticed the inclusion of validates_email_format_of; that's not a 
+standard ActiveRecord validation. It comes from the very useful 
+validates_email_format_of plugin, which is available at 
+http://code.dunae.ca/validates_email_format_of.html . Obviously 
+formatted_as_email won't work if you haven't installed this plugin.
+
+== Contact
+
+If you have any bugs, questions, etc., please feel to email me:
+
+Francis Hwang
+francis@diversionmedia.com
