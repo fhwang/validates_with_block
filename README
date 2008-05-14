@@ -1,0 +1,4 @@
+ValidatesWithBlock
+==================
+
+Allows for dynamic, more readable block-driven validation for ActiveRecord models.

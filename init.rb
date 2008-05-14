@@ -1,0 +1,1 @@
+require 'validates_with_block'
