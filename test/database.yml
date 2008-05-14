@@ -1,0 +1,6 @@
+mysql:
+  :adapter: mysql
+  :host: localhost
+  :username: test
+  :password: test
+  :database: validates_with_block_test
