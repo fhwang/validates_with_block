@@ -32,6 +32,12 @@ class User < ActiveRecord::Base
   end
   
   attr_accessor :password_confirmation
+  
+  attr_accessor :tmp_avatar_path
+  
+  validates_tmp_avatar_path do |tmp_avatar_path|
+    tmp_avatar_path.present
+  end
 end
 
 class ValidatesWithBlockTest < Test::Unit::TestCase
@@ -46,6 +52,11 @@ class ValidatesWithBlockTest < Test::Unit::TestCase
 
   def new_user( atts = {} )
     @user = User.new atts
+  end
+  
+  def test_accessor
+    new_user
+    assert_user_errors_on :tmp_avatar_path
   end
 
   def test_confirmed
@@ -71,7 +82,7 @@ class ValidatesWithBlockTest < Test::Unit::TestCase
   def test_unique
     User.create(
       :birthday => Date.today, :login => 'billuser', :password => 'p',
-      :password_confirmation => 'p'
+      :password_confirmation => 'p', :tmp_avatar_path => '/some/img.jpg'
     )
     new_user :login => 'billuser'
     assert_user_errors_on :login
