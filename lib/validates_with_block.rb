@@ -1,30 +1,27 @@
 module ValidatesWithBlock
-  def self.included( including_class )
-    including_class.class_eval do
-      class << self
-        alias_method :method_missing_aliased_from_vwb, :method_missing
+  def self.included(mod)
+    mod.extend ClassMethods
+    super
+  end
+  
+  module ClassMethods
+    
+    def method_missing(sym, *args)
+      if sym.to_s =~ /^validates_(.*)$/ && valid_attribute_name?($1)
+        raise "Block required for #{sym}" unless block_given?
+        yield FieldValidationRecipient.new( self, $1.to_sym )
+      else
+        super
       end
     end
     
-    def including_class.method_missing( sym, *args )
-      begin
-        method_missing_aliased_from_vwb( sym, *args )
-      rescue NoMethodError => e
-        if sym.to_s =~ /^validates_(.*)$/ and block_given?
-          maybe_attr_name = $1
-          setter_names = (
-            instance_methods - ActiveRecord::Base.instance_methods
-          ).select { |meth| meth =~ /=$/ }
-          if column_names.include?( maybe_attr_name ) or
-             ( setter_names.include?( maybe_attr_name + '=' ) and
-               instance_methods.include?( maybe_attr_name ) )
-            yield FieldValidationRecipient.new( self, maybe_attr_name.to_sym )
-            return
-          end
-        end
-        raise e
-      end
+    def valid_attribute_name?(name)
+      column_names.include?(name) or (
+        setter_names = (instance_methods - ActiveRecord::Base.instance_methods).select { |meth| meth =~ /=$/ }
+        setter_names.include?(name + '=') &&
+        instance_methods.include?(name))
     end
+    
   end
   
   class FieldValidationRecipient
