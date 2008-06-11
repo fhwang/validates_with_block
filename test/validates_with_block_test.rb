@@ -1,6 +1,5 @@
 require 'test/unit'
 require 'rubygems'
-gem 'activerecord'
 require 'active_record'
 require File.dirname(__FILE__) + '/../lib/validates_with_block'
 
