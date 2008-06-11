@@ -17,8 +17,8 @@ module ValidatesWithBlock
     
     def valid_attribute_name?(name)
       column_names.include?(name) || (
-        instance_methods(false).include?("#{name}=") &&
-        instance_methods(false).include?(name)
+        instance_methods.include?("#{name}=") &&
+        instance_methods.include?(name)
       )
     end
     
