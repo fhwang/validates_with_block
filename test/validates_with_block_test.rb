@@ -1,23 +1,21 @@
 require 'test/unit'
 require 'rubygems'
-require_gem 'activerecord'
+gem 'activerecord'
+require 'active_record'
 require File.dirname(__FILE__) + '/../lib/validates_with_block'
 
 config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
 ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + '/debug.log')
-ActiveRecord::Base.establish_connection(config[ENV['DB'] || 'mysql'])
+ActiveRecord::Base.establish_connection(config[ENV['DB'] || 'memory'])
 
-ActiveRecord::Base.connection.execute "DROP TABLE IF EXISTS `users`"
-user_schema_sql = <<-SQL
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL auto_increment,
-  `birthday` date default NULL,
-  `login` varchar(255) default NULL,
-  `password` varchar(255) default NULL,
-  PRIMARY KEY  (`id`)
-);
-SQL
-ActiveRecord::Base.connection.execute user_schema_sql
+silence_stream(STDOUT) do
+  ActiveRecord::Schema.define do
+    create_table 'users', :force => true do |user|
+      user.string 'login', 'password'
+      user.date 'birthday'
+    end
+  end
+end
 
 class User < ActiveRecord::Base
   validates_birthday do |birthday|
