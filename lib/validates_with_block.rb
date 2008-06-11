@@ -16,10 +16,8 @@ module ValidatesWithBlock
     end
     
     def valid_attribute_name?(name)
-      column_names.include?(name) or (
-        setter_names = (instance_methods - ActiveRecord::Base.instance_methods).select { |meth| meth =~ /=$/ }
-        setter_names.include?(name + '=') &&
-        instance_methods.include?(name))
+      return true if column_names.include?(name)
+      instance_methods(false).include?("#{name}=") && instance_methods(false).include?(name)
     end
     
   end
