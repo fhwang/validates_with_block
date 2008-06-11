@@ -20,3 +20,8 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
+
+task :svn_copy do
+  `cp -r . ../rubyforge_nycrb/validates_with_block`
+  `rm -rf ../rubyforge_nycrb/validates_with_block/.git*`
+end
